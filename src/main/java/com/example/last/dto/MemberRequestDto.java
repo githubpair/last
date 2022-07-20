@@ -1,7 +1,7 @@
 package com.example.last.dto;
 
 import com.example.last.entity.Authority;
-import com.example.last.entity.Member;
+import com.example.last.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +18,8 @@ public class MemberRequestDto {
     private String password;
     private String nickname;
 
-    public Member toMember(PasswordEncoder passwordEncoder) {
-        return Member.builder()
+    public User toMember(PasswordEncoder passwordEncoder) {
+        return User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)

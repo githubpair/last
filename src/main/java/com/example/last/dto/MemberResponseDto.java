@@ -1,6 +1,6 @@
 package com.example.last.dto;
 
-import com.example.last.entity.Member;
+import com.example.last.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +14,10 @@ public class MemberResponseDto {
     private String email;
     private String nickname;
 
-    public static MemberResponseDto of(Member member) {
+    public static MemberResponseDto of(User user) {
         return MemberResponseDto.builder()
-                .email(member.getEmail())
-                .nickname(member.getNickname())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
                 .build();
     }
 }

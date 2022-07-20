@@ -2,8 +2,8 @@ package com.example.last.service;
 
 import com.example.last.config.SecurityUtil;
 import com.example.last.dto.MemberResponseDto;
-import com.example.last.entity.Member;
-import com.example.last.repository.MemberRepository;
+import com.example.last.entity.User;
+import com.example.last.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,29 +13,29 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public MemberResponseDto getMyInfoBySecurity() {
-        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
+        return userRepository.findById(SecurityUtil.getCurrentMemberId())
                 .map(MemberResponseDto::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
     }
 
     @Transactional
     public MemberResponseDto changeMemberNickname(String email, String nickname) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
-        member.setNickname(nickname);
-        return MemberResponseDto.of(memberRepository.save(member));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+        user.setNickname(nickname);
+        return MemberResponseDto.of(userRepository.save(user));
     }
 
     @Transactional
     public MemberResponseDto changeMemberPassword(String email, String exPassword, String newPassword) {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
-        if (!passwordEncoder.matches(exPassword, member.getPassword())) {
+        User user = userRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+        if (!passwordEncoder.matches(exPassword, user.getPassword())) {
             throw new RuntimeException("비밀번호가 맞지 않습니다");
         }
-        member.setPassword(passwordEncoder.encode((newPassword)));
-        return MemberResponseDto.of(memberRepository.save(member));
+        user.setPassword(passwordEncoder.encode((newPassword)));
+        return MemberResponseDto.of(userRepository.save(user));
     }
 }

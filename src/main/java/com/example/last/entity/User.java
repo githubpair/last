@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Builder
 @NoArgsConstructor
-public class Member {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class Member {
     public void setPassword(String password) { this.password = password; }
 
     @Builder
-    public Member(Long id, String email, String password, String nickname, Authority authority) {
+    public User(Long id, String email, String password, String nickname, Authority authority) {
         this.id = id;
         this.email = email;
         this.password = password;
