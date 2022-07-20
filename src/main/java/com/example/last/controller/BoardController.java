@@ -1,5 +1,6 @@
 package com.example.last.controller;
 
+import com.example.last.config.SecurityUtil;
 import com.example.last.dto.BoardDto;
 import com.example.last.entity.User;
 import com.example.last.repository.UserRepository;
@@ -7,6 +8,7 @@ import com.example.last.response.Response;
 import com.example.last.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -38,11 +40,12 @@ public class BoardController {
     // 게시글 작성
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/boards/write")
-    public Response write(@RequestBody BoardDto boardDto) {
+    public Response write(@RequestBody BoardDto boardDto, Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
 
-        User user = userRepository.findById(1L).get();
+        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
+
         return new Response("성공", "글 작성 성공", boardService.write(boardDto, user));
     }
 
@@ -51,7 +54,7 @@ public class BoardController {
     // 게시글 수정
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/boards/update/{id}")
-    public Response edit(@RequestBody BoardDto boardDto, @PathVariable("id") Integer id) {
+    public Response edit(@RequestBody BoardDto boardDto, @PathVariable("id") Integer id,Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
 
@@ -62,7 +65,7 @@ public class BoardController {
         // 맞으면 아래 로직 수행, 틀리면 다른 로직(ResponseFail 등 커스텀으로 만들어서) 수행
         // 이건 if문으로 처리할 수 있습니다. * 이 방법 말고 service 내부에서 확인해도 상관 없음
 
-        User user = userRepository.findById(1L).get();
+        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
         return new Response("성공", "글 수정 성공", boardService.update(id, boardDto));
     }
 
