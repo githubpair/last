@@ -2,7 +2,9 @@ package com.example.last.controller;
 
 import com.example.last.config.SecurityUtil;
 import com.example.last.dto.BoardDto;
+import com.example.last.entity.Board;
 import com.example.last.entity.User;
+import com.example.last.repository.BoardRepository;
 import com.example.last.repository.UserRepository;
 import com.example.last.response.Response;
 import com.example.last.service.BoardService;
@@ -11,12 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 public class BoardController {
 
     private final BoardService boardService;
     private final UserRepository userRepository;
+
+    private final BoardRepository boardRepository;
 
 
     // 전체 게시글 조회
@@ -25,7 +31,6 @@ public class BoardController {
     public Response getBoards() {
         return new Response("성공", "전체 게시물 리턴", boardService.getBoards());
     }
-
 
 
     // 개별 게시글 조회
@@ -43,7 +48,6 @@ public class BoardController {
     public Response write(@RequestBody BoardDto boardDto, Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
-
         User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
 
         return new Response("성공", "글 작성 성공", boardService.write(boardDto, user));
@@ -54,7 +58,7 @@ public class BoardController {
     // 게시글 수정
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/boards/update/{id}")
-    public Response edit(@RequestBody BoardDto boardDto, @PathVariable("id") Integer id,Authentication authentication) {
+    public Response edit(@RequestBody BoardDto boardDto, @PathVariable("id") Integer id, Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
 
@@ -65,21 +69,35 @@ public class BoardController {
         // 맞으면 아래 로직 수행, 틀리면 다른 로직(ResponseFail 등 커스텀으로 만들어서) 수행
         // 이건 if문으로 처리할 수 있습니다. * 이 방법 말고 service 내부에서 확인해도 상관 없음
 
-        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
-        return new Response("성공", "글 수정 성공", boardService.update(id, boardDto));
+
+
+        // 해당 게시글의 작성자 확인
+        Optional<Board> findBoard = boardRepository.findById(id);
+//        System.out.println("getBoard(id).getData() : " +  getBoard(id).getData());
+//        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
+
+        if (Integer.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
+            return new Response("성공", "글 수정 성공", boardService.update(id, boardDto));
+        } else {
+            throw new RuntimeException("계정 정보가 맞지 않습니다.");
+        }
     }
-
-
 
 
     // 게시글 삭제
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/boards/delete/{id}")
-    public Response delete(@PathVariable("id") Integer id) {
+    public Response delete(@PathVariable("id") Integer id, Authentication authentication) {
         // 이것도 마찬가지로, JWT(로그인 관련) 공부를 하고나서 현재 이 요청을 보낸 로그인된 유저의 정보가
         // 게시글의 주인인지 확인하고, 맞으면 삭제 수행 후 리턴해주고, 틀리면 에러 리턴해주면 됩니다.
 
-        boardService.delete(id); // 이 메소드는 반환값이 없으므로 따로 삭제 수행해주고, 리턴에는 null을 넣어줌
-        return new Response("성공", "글 삭제 성공", null);
+        Optional<Board> findBoard = boardRepository.findById(id);
+
+        if (Integer.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
+            boardService.delete(id); // 이 메소드는 반환값이 없으므로 따로 삭제 수행해주고, 리턴에는 null을 넣어줌
+            return new Response("성공", "글 삭제 성공", null);
+        } else {
+            throw new RuntimeException("계정 정보가 맞지 않습니다.");
+        }
     }
 }
