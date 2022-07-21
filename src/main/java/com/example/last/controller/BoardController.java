@@ -48,7 +48,7 @@ public class BoardController {
     public Response write(@RequestBody BoardDto boardDto, Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
-        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
+        User user = userRepository.findById(Integer.valueOf(authentication.getName())).get();
 
         return new Response("성공", "글 작성 성공", boardService.write(boardDto, user));
     }
@@ -70,18 +70,19 @@ public class BoardController {
         // 이건 if문으로 처리할 수 있습니다. * 이 방법 말고 service 내부에서 확인해도 상관 없음
 
 
-
         // 해당 게시글의 작성자 확인
         Optional<Board> findBoard = boardRepository.findById(id);
 //        System.out.println("getBoard(id).getData() : " +  getBoard(id).getData());
 //        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
 
-        if (Integer.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
+        if (Long.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
             return new Response("성공", "글 수정 성공", boardService.update(id, boardDto));
         } else {
             throw new RuntimeException("계정 정보가 맞지 않습니다.");
         }
     }
+
+
 
 
     // 게시글 삭제
@@ -93,11 +94,12 @@ public class BoardController {
 
         Optional<Board> findBoard = boardRepository.findById(id);
 
-        if (Integer.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
+        if (Long.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
             boardService.delete(id); // 이 메소드는 반환값이 없으므로 따로 삭제 수행해주고, 리턴에는 null을 넣어줌
             return new Response("성공", "글 삭제 성공", null);
         } else {
             throw new RuntimeException("계정 정보가 맞지 않습니다.");
         }
+
     }
 }
