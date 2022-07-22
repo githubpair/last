@@ -5,6 +5,8 @@ import com.example.last.entity.Board;
 import com.example.last.entity.User;
 import com.example.last.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,13 @@ public class BoardService {
         boards.forEach(s -> boardDtos.add(BoardDto.toDto(s)));
         return boardDtos;
     }
+
+    // 전체 게시물 페이징 조회
+    @Transactional(readOnly = true)
+    public Page<Board> getBoardsPaging(Pageable pageable) {
+        return boardRepository.findAll(pageable);
+    }
+
 
     // 개별 게시물 조회
     @Transactional(readOnly = true)

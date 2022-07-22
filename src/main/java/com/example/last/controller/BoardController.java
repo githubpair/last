@@ -9,7 +9,11 @@ import com.example.last.repository.UserRepository;
 import com.example.last.response.Response;
 import com.example.last.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,11 +29,18 @@ public class BoardController {
     private final BoardRepository boardRepository;
 
 
-    // 전체 게시글 조회
-    @ResponseStatus(HttpStatus.OK)
+//    // 전체 게시글 조회
+//    @ResponseStatus(HttpStatus.OK)
+//    @GetMapping("/api/boards2")
+//    public Response getBoards() {
+//        return new Response("성공", "전체 게시물 리턴", boardService.getBoards());
+//    }
+
+
+    // 전체 게시물 페이징 조회
     @GetMapping("/api/boards")
-    public Response getBoards() {
-        return new Response("성공", "전체 게시물 리턴", boardService.getBoards());
+    public Page<Board> getBoardsPaging(Pageable pageable) {
+        return boardService.getBoardsPaging(pageable);
     }
 
 
@@ -39,6 +50,7 @@ public class BoardController {
     public Response getBoard(@PathVariable("id") Integer id) {
         return new Response("성공", "개별 게시물 리턴", boardService.getBoard(id));
     }
+
 
 
 
