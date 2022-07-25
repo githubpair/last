@@ -28,11 +28,14 @@ public class BoardService {
         return boardDtos;
     }
 
-    // 전체 게시물 페이징 조회
+
+    // 게시물 페이지 조회
     @Transactional(readOnly = true)
-    public Page<Board> getBoardsPaging(Pageable pageable) {
-        return boardRepository.findAll(pageable);
+    public Page<Board> getBoardPaging(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAll(pageable);
+        return boardPage;
     }
+
 
 
     // 개별 게시물 조회

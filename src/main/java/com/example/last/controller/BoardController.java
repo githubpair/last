@@ -7,6 +7,7 @@ import com.example.last.entity.User;
 import com.example.last.repository.BoardRepository;
 import com.example.last.repository.UserRepository;
 import com.example.last.response.Response;
+import com.example.last.response.ResponsePage;
 import com.example.last.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,19 +29,12 @@ public class BoardController {
 
     private final BoardRepository boardRepository;
 
-
-//    // 전체 게시글 조회
-//    @ResponseStatus(HttpStatus.OK)
-//    @GetMapping("/api/boards2")
-//    public Response getBoards() {
-//        return new Response("성공", "전체 게시물 리턴", boardService.getBoards());
-//    }
-
-
-    // 전체 게시물 페이징 조회
+     //전체 게시물 조회
     @GetMapping("/api/boards")
-    public Page<Board> getBoardsPaging(Pageable pageable) {
-        return boardService.getBoardsPaging(pageable);
+    public ResponsePage getBoardsPaging(Pageable pageable) {
+        return new ResponsePage("성공", "전체 게시물 리턴", boardService.getBoards(),
+                String.valueOf(boardService.getBoardPaging(pageable).getTotalPages()
+                ), String.valueOf(boardService.getBoardPaging(pageable).getTotalElements()));
     }
 
 
@@ -84,8 +78,7 @@ public class BoardController {
 
         // 해당 게시글의 작성자 확인
         Optional<Board> findBoard = boardRepository.findById(id);
-//        System.out.println("getBoard(id).getData() : " +  getBoard(id).getData());
-//        User user = userRepository.findById(Long.valueOf(authentication.getName())).get();
+
 
         if (Long.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
             return new Response("성공", "글 수정 성공", boardService.update(id, boardDto));
