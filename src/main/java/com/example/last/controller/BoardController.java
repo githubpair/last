@@ -9,6 +9,7 @@ import com.example.last.repository.UserRepository;
 import com.example.last.response.Response;
 import com.example.last.response.ResponsePage;
 import com.example.last.service.BoardService;
+import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,13 +30,23 @@ public class BoardController {
 
     private final BoardRepository boardRepository;
 
-     //전체 게시물 조회
+    //전체 게시글 조회
     @GetMapping("/api/boards")
     public ResponsePage getBoardsPaging(Pageable pageable) {
-        return new ResponsePage("성공", "전체 게시물 리턴", boardService.getBoardsPaging(pageable),
+        return new ResponsePage("성공", "전체 게시글 리턴", boardService.getBoardsPaging(pageable),
                 String.valueOf(boardService.getBoardPaging(pageable).getTotalPages()
                 ), String.valueOf(boardService.getBoardPaging(pageable).getTotalElements()));
     }
+
+    //내 게시글 조회
+    //todo 내 게시글을 페이징 처리하는 방법을 확인해서 적용 필요
+    @GetMapping("api/myboards")
+    public ResponsePage getMyBoards(Pageable pageable, Authentication authentication) {
+        return new ResponsePage("성공", "내 게시글 리턴", boardService.getMyBoards(pageable, authentication),
+                String.valueOf(boardService.getMyBoardPaging(pageable, authentication).getTotalPages()
+                ), String.valueOf(boardService.getMyBoardPaging(pageable,authentication).getTotalElements()));
+    }
+
 
 
     // 개별 게시글 조회

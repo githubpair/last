@@ -4,9 +4,11 @@ import com.example.last.dto.BoardDto;
 import com.example.last.entity.Board;
 import com.example.last.entity.User;
 import com.example.last.repository.BoardRepository;
+import com.example.last.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +20,7 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-
-//    // 전체 게시물 조회
-//    @Transactional(readOnly = true)
-//    public List<BoardDto> getBoards() {
-//        List<Board> boards = boardRepository.findAll();
-//        List<BoardDto> boardDtos = new ArrayList<>();
-//        boards.forEach(s -> boardDtos.add(BoardDto.toDto(s)));
-//        return boardDtos;
-//    }
+    private final UserRepository userRepository;
 
 
     // 전체 게시물 페이지 조회
@@ -45,6 +39,29 @@ public class BoardService {
         Page<Board> boardPage = boardRepository.findAll(pageable);
         return boardPage;
     }
+
+
+    //내 게시글 조회
+    public List<BoardDto> getMyBoards(Pageable pageable, Authentication authentication) {
+        Integer userId = Integer.valueOf(authentication.getName());
+        User user = userRepository.findById(userId).get();
+        Page<Board> boardPage = boardRepository.findByUser(pageable,user);
+        List<BoardDto> boardDtos = new ArrayList<>();
+        for (Board s : boardPage) {
+                boardDtos.add(BoardDto.toDto(s));
+        }
+        return boardDtos;
+    }
+
+    //내 게시글 페이지
+    @Transactional(readOnly = true)
+    public Page<Board> getMyBoardPaging(Pageable pageable, Authentication authentication) {
+        Integer userId = Integer.valueOf(authentication.getName());
+        User user = userRepository.findById(userId).get();
+        Page<Board> boardMyPage = boardRepository.findByUser(pageable, user);
+        return boardMyPage;
+    }
+
 
 
 
@@ -98,4 +115,6 @@ public class BoardService {
         boardRepository.deleteById(id);
 
     }
+
+
 }
