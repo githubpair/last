@@ -9,7 +9,6 @@ import com.example.last.repository.CommentRepository;
 import com.example.last.repository.UserRepository;
 import com.example.last.response.Response;
 import com.example.last.service.CommentService;
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -53,13 +52,9 @@ public class CommentController {
 
         // 해당 댓글의 작성자 확인
         Optional<Comment> findComment = commentRepository.findById(commentId);
-
-
-
         if (findComment.get().getUser().getId() == Integer.valueOf(authentication.getName())) {
             return new Response("성공", "댓글 삭제 완료", commentService.deleteComment(commentId));
         }
-
         else {
             return new Response("실패", "댓글 작성자가 아닙니다.", null);
         }
