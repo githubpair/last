@@ -32,7 +32,7 @@ public class BoardController {
      //전체 게시물 조회
     @GetMapping("/api/boards")
     public ResponsePage getBoardsPaging(Pageable pageable) {
-        return new ResponsePage("성공", "전체 게시물 리턴", boardService.getBoards(),
+        return new ResponsePage("성공", "전체 게시물 리턴", boardService.getBoardsPaging(pageable),
                 String.valueOf(boardService.getBoardPaging(pageable).getTotalPages()
                 ), String.valueOf(boardService.getBoardPaging(pageable).getTotalElements()));
     }

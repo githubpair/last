@@ -19,12 +19,22 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    // 전체 게시물 조회
+//    // 전체 게시물 조회
+//    @Transactional(readOnly = true)
+//    public List<BoardDto> getBoards() {
+//        List<Board> boards = boardRepository.findAll();
+//        List<BoardDto> boardDtos = new ArrayList<>();
+//        boards.forEach(s -> boardDtos.add(BoardDto.toDto(s)));
+//        return boardDtos;
+//    }
+
+
+    // 전체 게시물 페이지 조회
     @Transactional(readOnly = true)
-    public List<BoardDto> getBoards() {
-        List<Board> boards = boardRepository.findAll();
+    public List<BoardDto> getBoardsPaging(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAll(pageable);
         List<BoardDto> boardDtos = new ArrayList<>();
-        boards.forEach(s -> boardDtos.add(BoardDto.toDto(s)));
+        boardPage.forEach(s -> boardDtos.add(BoardDto.toDto(s)));
         return boardDtos;
     }
 

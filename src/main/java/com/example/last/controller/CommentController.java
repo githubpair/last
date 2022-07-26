@@ -27,7 +27,6 @@ public class CommentController {
     private final CommentRepository commentRepository;
 
     // 댓글 작성
-    @ApiOperation(value = "댓글 작성", notes = "댓글을 작성한다.")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/api/comments/{boardId}")
     public Response writeComment(@PathVariable("boardId") Integer boardId,
@@ -39,7 +38,6 @@ public class CommentController {
 
     // 게시글에 달린 댓글 모두 불러오기
 
-    @ApiOperation(value = "댓글 불러오기", notes = "게시글에 달린 댓글을 모두 불러온다.")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/comments/{boardId}")
     public Response getComments(@PathVariable("boardId") Integer boardId) {
@@ -47,7 +45,6 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    @ApiOperation(value = "댓글 삭제", notes = "게시글에 달린 댓글을 삭제합니다.")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/comments/{boardId}/{commentId}")
     public Response deleteComment(@PathVariable("boardId") Integer boardId,
