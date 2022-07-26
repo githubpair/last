@@ -39,7 +39,6 @@ public class BoardController {
     }
 
     //내 게시글 조회
-    //todo 내 게시글을 페이징 처리하는 방법을 확인해서 적용 필요
     @GetMapping("api/myboards")
     public ResponsePage getMyBoards(Pageable pageable, Authentication authentication) {
         return new ResponsePage("성공", "내 게시글 리턴", boardService.getMyBoards(pageable, authentication),
@@ -47,13 +46,17 @@ public class BoardController {
                 ), String.valueOf(boardService.getMyBoardPaging(pageable,authentication).getTotalElements()));
     }
 
-
-
     // 개별 게시글 조회
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/boards/{id}")
-    public Response getBoard(@PathVariable("id") Integer id) {
-        return new Response("성공", "개별 게시물 리턴", boardService.getBoard(id));
+    public Response getBoard(@PathVariable("id") Integer id, Authentication authentication) {
+        // 해당 게시글의 작성자 확인
+        Optional<Board> findBoard = boardRepository.findById(id);
+        if (Long.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {
+            return new Response("성공", "내 게시글", boardService.getBoard(id));
+        } else {
+            return new Response("성공", "타인 게시글", boardService.getBoard(id));
+        }
     }
 
 
