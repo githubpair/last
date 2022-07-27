@@ -59,9 +59,6 @@ public class BoardController {
         }
     }
 
-
-
-
     // 게시글 작성
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/boards/write")
@@ -101,16 +98,10 @@ public class BoardController {
         }
     }
 
-
-
-
     // 게시글 삭제
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/boards/delete/{id}")
     public Response delete(@PathVariable("id") Integer id, Authentication authentication) {
-        // 이것도 마찬가지로, JWT(로그인 관련) 공부를 하고나서 현재 이 요청을 보낸 로그인된 유저의 정보가
-        // 게시글의 주인인지 확인하고, 맞으면 삭제 수행 후 리턴해주고, 틀리면 에러 리턴해주면 됩니다.
-
         Optional<Board> findBoard = boardRepository.findById(id);
 
         if (Long.valueOf(authentication.getName()) == findBoard.get().getUser().getId()) {

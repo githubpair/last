@@ -23,7 +23,7 @@ public class BoardService {
     private final UserRepository userRepository;
 
 
-    // 전체 게시물 페이지 조회
+    // 전체 게시글 페이지 조회
     @Transactional(readOnly = true)
     public List<BoardDto> getBoardsPaging(Pageable pageable) {
         Page<Board> boardPage = boardRepository.findAll(pageable);
@@ -33,7 +33,7 @@ public class BoardService {
     }
 
 
-    // 게시물 페이지 조회
+    // 게시글 페이지 조회
     @Transactional(readOnly = true)
     public Page<Board> getBoardPaging(Pageable pageable) {
         Page<Board> boardPage = boardRepository.findAll(pageable);
@@ -64,18 +64,23 @@ public class BoardService {
 
 
 
-
-    // 개별 게시물 조회
-    @Transactional(readOnly = true)
+    // 개별 게시글 조회
+    @Transactional
     public BoardDto getBoard(int id) {
         Board board = boardRepository.findById(id).orElseThrow(() -> {
             return new IllegalArgumentException("Board Id를 찾을 수 없습니다.");
         });
+
+        // 개별 게시글 조회 시, 카운트 증가
+        int views = board.getViews() + 1;
+        board.setViews(views);
+        boardRepository.save(board);
+
         BoardDto boardDto = BoardDto.toDto(board);
         return boardDto;
     }
 
-    // 게시물 작성
+    // 게시글 작성
     @Transactional
     public BoardDto write(BoardDto boardDto, User user) {
         Board board = new Board();
@@ -87,7 +92,7 @@ public class BoardService {
         return BoardDto.toDto(board);
     }
 
-    // 게시물 수정
+    // 게시글 수정
     @Transactional
     public BoardDto update(int id, BoardDto boardDto) {
         Board board = boardRepository.findById(id).orElseThrow(() -> {

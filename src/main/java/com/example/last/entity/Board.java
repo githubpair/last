@@ -27,6 +27,10 @@ public class Board {
     @Column(nullable = false)
     private String file;
 
+    // 조회수
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int views;
+
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

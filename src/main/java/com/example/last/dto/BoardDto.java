@@ -14,6 +14,7 @@ public class BoardDto {
     private String content;
     private String file;
     private String writer;
+    private int views;
 
     public static BoardDto toDto(Board board) {
         return new BoardDto(
@@ -21,7 +22,8 @@ public class BoardDto {
                 board.getTitle(),
                 board.getContent(),
                 board.getFile(),
-                board.getUser().getNickname());
+                board.getUser().getNickname(),
+                board.getViews());
     }
 
 }
