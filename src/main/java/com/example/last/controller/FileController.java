@@ -14,7 +14,7 @@ public class FileController {
     @PostMapping("/api/fileData")
     public String upload(@RequestParam MultipartFile fileData) throws Exception {
 
-        final String ABSOLUTE_PATH = "/Users/sopp/study/last/src/main/resources/upload";
+        final String ABSOLUTE_PATH = "/Users/sopp/study/my-app/public/image";
 
         String fileName = fileData.getOriginalFilename();
         File destinationFile = new File(ABSOLUTE_PATH + "/" + fileName);
