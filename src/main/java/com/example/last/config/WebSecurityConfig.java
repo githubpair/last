@@ -43,7 +43,14 @@ public class WebSecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**", "/api/boards", "/api/boards/*").permitAll()
+                .antMatchers("/api/auth/**", "/api/boards", "/api/boards/*",
+
+                        "/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
