@@ -10,6 +10,7 @@ import com.example.last.response.Response;
 import com.example.last.response.ResponsePage;
 import com.example.last.service.BoardService;
 import com.sun.xml.bind.v2.TODO;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,7 @@ public class BoardController {
 
     //전체 게시글 조회
     @GetMapping("/api/boards")
+    @ApiOperation(value = "전체 게시글 조회", notes = "등록된 전체 게시글을 조회하는 API입니다.")
     public ResponsePage getBoardsPaging(Pageable pageable) {
         return new ResponsePage("성공", "전체 게시글 리턴", boardService.getBoardsPaging(pageable),
                 String.valueOf(boardService.getBoardPaging(pageable).getTotalPages()
@@ -40,6 +42,7 @@ public class BoardController {
 
     //내 게시글 조회
     @GetMapping("api/myboards")
+    @ApiOperation(value = "내 게시글 조회", notes = "자신이 등록한 전체 게시글을 조회하는 API입니다.")
     public ResponsePage getMyBoards(Pageable pageable, Authentication authentication) {
         return new ResponsePage("성공", "내 게시글 리턴", boardService.getMyBoards(pageable, authentication),
                 String.valueOf(boardService.getMyBoardPaging(pageable, authentication).getTotalPages()
@@ -49,6 +52,7 @@ public class BoardController {
     // 개별 게시글 조회
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/boards/{id}")
+    @ApiOperation(value = "개별 게시글 조회", notes = "원하는 게시글을 조회하는 API입니다.")
     public Response getBoard(@PathVariable("id") Integer id, Authentication authentication) {
         // 해당 게시글의 작성자 확인
         Optional<Board> findBoard = boardRepository.findById(id);
@@ -62,6 +66,7 @@ public class BoardController {
     // 게시글 작성
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/boards/write")
+    @ApiOperation(value = "게시글 작성", notes = "신규 게시글을 등록하는 API입니다.")
     public Response write(@RequestBody BoardDto boardDto, Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
@@ -75,6 +80,7 @@ public class BoardController {
     // 게시글 수정
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/boards/update/{id}")
+    @ApiOperation(value = "게시글 수정", notes = "자신이 작성한 게시글 중에 원하는 게시글을 수정하는 API입니다.")
     public Response edit(@RequestBody BoardDto boardDto, @PathVariable("id") Integer id, Authentication authentication) {
         // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
         // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
@@ -101,6 +107,7 @@ public class BoardController {
     // 게시글 삭제
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/boards/delete/{id}")
+    @ApiOperation(value = "게시글 삭제", notes = "자신이 작성한 게시글 중에 원하는 게시글을 삭제하는 API입니다.")
     public Response delete(@PathVariable("id") Integer id, Authentication authentication) {
         Optional<Board> findBoard = boardRepository.findById(id);
 
